@@ -42,7 +42,7 @@ PROJ_NAME=openblt_stm32f103
 #  cmd /c for %A in ("%cd%") do @echo %~sA 
 #TOOL_PATH=/opt/gcc-arm-none-eabi-8-2018-q4-major/bin/
 #TOOL_PATH=C:/PROGRA~2/GNUTOO~1/82018-~1/bin/
-TOOL_PATH=
+TOOL_PATH=/opt/gcc-arm-none-eabi-10.3-2021.10/bin/
 
 
 #|--------------------------------------------------------------------------------------|
@@ -135,8 +135,14 @@ COBJS = $(patsubst %.c,%.o,$(PROJ_CSRCS))
 #|--------------------------------------------------------------------------------------|
 #| Make ALL                                                                             |
 #|--------------------------------------------------------------------------------------|
+.PHONY: prepare_dirs
+
+prepare_dirs:
+	mkdir -p $(OBJ_PATH)
+	mkdir -p $(BIN_PATH)
+
 .PHONY: all
-all: $(BIN_PATH)/$(PROJ_NAME).srec
+all: prepare_dirs $(BIN_PATH)/$(PROJ_NAME).srec
 
 $(BIN_PATH)/$(PROJ_NAME).srec : $(BIN_PATH)/$(PROJ_NAME).elf
 	@$(OC) $< $(OFLAGS) $@

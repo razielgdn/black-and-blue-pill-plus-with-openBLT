@@ -89,6 +89,7 @@ INC_PATH = $(patsubst %/,%,$(patsubst %,-I%,$(sort $(foreach file,$(filter %.h,$
 LIB_PATH  = 
 
 
+
 #|--------------------------------------------------------------------------------------|
 #| Options for toolchain binaries                                                       |
 #|--------------------------------------------------------------------------------------|
@@ -126,8 +127,14 @@ COBJS = $(patsubst %.c,%.o,$(PROJ_CSRCS))
 #|--------------------------------------------------------------------------------------|
 #| Make ALL                                                                             |
 #|--------------------------------------------------------------------------------------|
+.PHONY: prepare_dirs
+
+prepare_dirs:
+	mkdir -p $(OBJ_PATH)
+	mkdir -p $(BIN_PATH)
+
 .PHONY: all
-all: $(BIN_PATH)/$(PROJ_NAME).srec
+all: prepare_dirs $(BIN_PATH)/$(PROJ_NAME).srec
 
 $(BIN_PATH)/$(PROJ_NAME).srec : $(BIN_PATH)/$(PROJ_NAME).elf
 	@$(OC) $< $(OFLAGS) $@
