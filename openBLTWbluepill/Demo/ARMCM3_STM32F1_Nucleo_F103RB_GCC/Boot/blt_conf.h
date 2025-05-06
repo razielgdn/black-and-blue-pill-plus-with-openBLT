@@ -73,7 +73,7 @@
 /** \brief Configure number of bytes in the host->target data packet. */
 #define BOOT_COM_RS232_RX_MAX_DATA       (129)
 /** \brief Select the desired UART peripheral as a zero based index. */
-#define BOOT_COM_RS232_CHANNEL_INDEX     (1)
+#define BOOT_COM_RS232_CHANNEL_INDEX     (0)
 
 /* The CAN communication interface is selected by setting the BOOT_COM_CAN_ENABLE
  * configurable to 1. Configurable BOOT_COM_CAN_BAUDRATE selects the communication speed
@@ -89,7 +89,7 @@
  *
  */
 /** \brief Enable/disable CAN transport layer. */
-#define BOOT_COM_CAN_ENABLE             (1)
+#define BOOT_COM_CAN_ENABLE             (0)
 /** \brief Configure the desired CAN baudrate. */
 #define BOOT_COM_CAN_BAUDRATE           (500000)
 /** \brief Configure CAN message ID target->host. */

@@ -159,7 +159,7 @@ void HAL_MspInit(void)
 
 #if (BOOT_COM_RS232_ENABLE > 0)
   /* UART clock enable. */
-  LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART2);
+  LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1);
 #endif
 
 #if (BOOT_COM_CAN_ENABLE > 0)
@@ -168,12 +168,12 @@ void HAL_MspInit(void)
 #endif
 
   /* Configure GPIO pin for the LED. */
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_5;
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_2;   //LED connected to PB2 <--  original PA: LL_GPIO_PIN_5
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
-  LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-  LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_5);
+  LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_2);
 
   /* Configure GPIO pin for (optional) backdoor entry input. */
   GPIO_InitStruct.Pin = LL_GPIO_PIN_13;
@@ -182,12 +182,12 @@ void HAL_MspInit(void)
 
 #if (BOOT_COM_RS232_ENABLE > 0)
   /* UART TX and RX GPIO pin configuration. */
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_2;
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_9;   //TX: Serial1 PA9, Serial2 PA2, Serial3 PB11
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_HIGH;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_3;
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_10; //RX: Serial1 PA10, Serial2 PA3, Serial3 PB10
   GPIO_InitStruct.Mode = LL_GPIO_MODE_FLOATING;
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 #endif
@@ -232,7 +232,7 @@ void HAL_MspDeInit(void)
 
 #if (BOOT_COM_RS232_ENABLE > 0)
   /* UART clock disable. */
-  LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_USART2);
+  LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_USART1);
 #endif
 
   /* GPIO ports clock disable. */
