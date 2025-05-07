@@ -49,7 +49,7 @@ void LedInit(void)
   /* Note that the initialization of the LED GPIO pin is done in HAL_MspInit(). All that
    * is left to do here is to make sure the LED is turned off after initialization.
    */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET);
 } /*** end of LedInit ***/
 
 
@@ -77,13 +77,13 @@ void LedToggle(void)
   {
     led_toggle_state = 1;
     /* turn the LED on */
-    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_SET);
   }
   else
   {
     led_toggle_state = 0;
     /* turn the LED off */
-    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET);
   }
 
   /* store toggle time to determine next toggle interval */
