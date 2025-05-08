@@ -96,44 +96,35 @@ static void Init(void)
 ****************************************************************************************/
 static void SystemClock_Config(void)
 {
-  /* Set flash latency. */
-  LL_FLASH_SetLatency(LL_FLASH_LATENCY_2);
-  if (LL_FLASH_GetLatency() != LL_FLASH_LATENCY_2)
-  {
-    /* Error setting flash latency. */
-    ASSERT_RT(BLT_FALSE);
-  }
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-  /* Enable the HSE clock. */
-  LL_RCC_HSE_EnableBypass();
-  LL_RCC_HSE_Enable();
-  /* Wait till HSE is ready. */
-  while (LL_RCC_HSE_IsReady() != 1)
-  {
-    ;
-  }
-
-  /* Configure and enable the PLL. */
-  LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE_DIV_1, LL_RCC_PLL_MUL_9);
-  LL_RCC_PLL_Enable();
-
-  /* Wait till PLL is ready. */
-  while (LL_RCC_PLL_IsReady() != 1)
+  /** Initializes the CPU, AHB and APB busses clocks 
+  */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     ;
   }
-  LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
-  LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_2);
-  LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_1);
-  LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_PLL);
+  /** Initializes the CPU, AHB and APB busses clocks 
+  */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  /* Wait till System clock is ready. */
-  while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
     ;
   }
-  /* Update the system clock speed setting. */
-  LL_SetSystemCoreClock(BOOT_CPU_SYSTEM_SPEED_KHZ * 1000u);
 } /*** end of SystemClock_Config ***/
 
 
@@ -159,7 +150,7 @@ void HAL_MspInit(void)
 
 #if (BOOT_COM_RS232_ENABLE > 0)
   /* UART clock enable. */
-  LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART2);
+  LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1);
 #endif
 
 #if (BOOT_COM_CAN_ENABLE > 0)
@@ -168,12 +159,12 @@ void HAL_MspInit(void)
 #endif
 
   /* Configure GPIO pin for the LED. */
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_5;
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_2;   //LED connected to PB2 <--  original PA: LL_GPIO_PIN_5
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
-  LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-  LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_5);
+  LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_2);
 
   /* Configure GPIO pin for (optional) backdoor entry input. */
   GPIO_InitStruct.Pin = LL_GPIO_PIN_13;
@@ -182,22 +173,22 @@ void HAL_MspInit(void)
 
 #if (BOOT_COM_RS232_ENABLE > 0)
   /* UART TX and RX GPIO pin configuration. */
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_2;
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_9;   //TX: Serial1 PA9, Serial2 PA2, Serial3 PB11
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_HIGH;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_3;
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_10; //RX: Serial1 PA10, Serial2 PA3, Serial3 PB10
   GPIO_InitStruct.Mode = LL_GPIO_MODE_FLOATING;
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 #endif
 
 #if (BOOT_COM_CAN_ENABLE > 0)
   /* CAN TX and RX GPIO pin configuration. */
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_8;
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_8; //CAN RX
   GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
   LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_9;
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_9; // CAN TX
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_HIGH;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
@@ -232,7 +223,7 @@ void HAL_MspDeInit(void)
 
 #if (BOOT_COM_RS232_ENABLE > 0)
   /* UART clock disable. */
-  LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_USART2);
+  LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_USART1);
 #endif
 
   /* GPIO ports clock disable. */

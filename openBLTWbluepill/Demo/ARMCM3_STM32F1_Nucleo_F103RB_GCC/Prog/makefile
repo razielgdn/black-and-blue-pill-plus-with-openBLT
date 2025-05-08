@@ -89,6 +89,7 @@ INC_PATH = $(patsubst %/,%,$(patsubst %,-I%,$(sort $(foreach file,$(filter %.h,$
 LIB_PATH  = 
 
 
+
 #|--------------------------------------------------------------------------------------|
 #| Options for toolchain binaries                                                       |
 #|--------------------------------------------------------------------------------------|
@@ -102,7 +103,7 @@ CFLAGS     += -D__weak="__attribute__((weak))" -D__packed="__attribute__((__pack
 CFLAGS     += $(INC_PATH)
 AFLAGS      = $(CFLAGS)
 LFLAGS      = $(STDFLAGS) $(OPTFLAGS)
-LFLAGS     += -T"STM32F103RB_FLASH.ld" -Wl,-Map=$(BIN_PATH)/$(PROJ_NAME).map
+LFLAGS     += -T"STM32F103C8TX_FLASH.ld" -Wl,-Map=$(BIN_PATH)/$(PROJ_NAME).map
 LFLAGS     += -Wl,--gc-sections $(LIB_PATH)
 OFLAGS      = -O srec
 ODFLAGS     = -x
@@ -126,8 +127,14 @@ COBJS = $(patsubst %.c,%.o,$(PROJ_CSRCS))
 #|--------------------------------------------------------------------------------------|
 #| Make ALL                                                                             |
 #|--------------------------------------------------------------------------------------|
+.PHONY: prepare_dirs
+
+prepare_dirs:
+	mkdir -p $(OBJ_PATH)
+	mkdir -p $(BIN_PATH)
+
 .PHONY: all
-all: $(BIN_PATH)/$(PROJ_NAME).srec
+all: prepare_dirs $(BIN_PATH)/$(PROJ_NAME).srec
 
 $(BIN_PATH)/$(PROJ_NAME).srec : $(BIN_PATH)/$(PROJ_NAME).elf
 	@$(OC) $< $(OFLAGS) $@
@@ -163,6 +170,7 @@ clean:
 	@$(RM) $(RMFLAGS) $(foreach file,$(COBJS),$(OBJ_PATH)/$(file))
 	@$(RM) $(RMFLAGS) $(patsubst %.o,%.lst,$(foreach file,$(AOBJS),$(OBJ_PATH)/$(file)))
 	@$(RM) $(RMFLAGS) $(patsubst %.o,%.lst,$(foreach file,$(COBJS),$(OBJ_PATH)/$(file)))
+	@$(RM) $(RMFLAGS) $(patsubst %.o,%.su,$(foreach file,$(COBJS),$(OBJ_PATH)/$(file)))
 	@$(RM) $(RMFLAGS) $(patsubst %.o,%.d,$(foreach file,$(COBJS),$(OBJ_PATH)/$(file)))
 	@$(RM) $(RMFLAGS) $(BIN_PATH)/$(PROJ_NAME).elf $(BIN_PATH)/$(PROJ_NAME).map
 	@$(RM) $(RMFLAGS) $(BIN_PATH)/$(PROJ_NAME).srec
