@@ -140,11 +140,11 @@ COBJS = $(patsubst %.c,%.o,$(PROJ_CSRCS))
 prepare_dirs:
 	mkdir -p $(OBJ_PATH)
 	mkdir -p $(BIN_PATH)
-
+	
 .PHONY: all
-all: prepare_dirs $(BIN_PATH)/$(PROJ_NAME).srec
+all: prepare_dirs $(BIN_PATH)/$(PROJ_NAME).srec 
 
-$(BIN_PATH)/$(PROJ_NAME).srec : $(BIN_PATH)/$(PROJ_NAME).elf
+$(BIN_PATH)/$(PROJ_NAME).srec : $(BIN_PATH)/$(PROJ_NAME).elf 
 	@$(OC) $< $(OFLAGS) $@
 	@$(OD) $(ODFLAGS) $< > $(BIN_PATH)/$(PROJ_NAME).map
 	@echo +++ Summary of memory consumption:
@@ -154,6 +154,11 @@ $(BIN_PATH)/$(PROJ_NAME).srec : $(BIN_PATH)/$(PROJ_NAME).elf
 $(BIN_PATH)/$(PROJ_NAME).elf : $(AOBJS) $(COBJS) 
 	@echo +++ Linking [$(notdir $@)]
 	@$(LN) $(LFLAGS) -o $@ $(patsubst %.o,$(OBJ_PATH)/%.o,$(^F)) $(LIBS)
+	
+.PHONY: $(BIN_PATH)/$(PROJ_NAME).bin
+$(BIN_PATH)/$(PROJ_NAME).bin:                              #$(AOBJS) $(COBJS) 
+	 @$(OC)  -O binary $(BIN_PATH)/$(PROJ_NAME).elf $@
+    
 
 
 #|--------------------------------------------------------------------------------------|

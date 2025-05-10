@@ -53,3 +53,5 @@ Mkfile.old
 dkms.conf
 # IDE configs
 .vscode/
+BootCommander/Source/buiid/*
+BootCommander/LibOpenBLT/build/*
