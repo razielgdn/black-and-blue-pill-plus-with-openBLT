@@ -61,7 +61,11 @@ You can flash the bootloader using any tool available to you. Below are two  met
       - Click the Download button to flash the binary onto the microcontroller.  
       ![Fig 3. Downloading firmware](doc/images/program03.png)    
    Once completed, **OpenBLT** is now running on the **Bluepill Plus** board.    
-
+## Adapting an application to use with openBLT.
+Your embedded application must meet certain integration requirements. The bootloader expects the user application to be located at a specific memory address and to include a valid checksum for verification. 
+1. Update the Linker Script
+2. Configure Vector Offset
+3. 
 ## Using OpenBLT  
 Once the bootloader has been successfully flashed onto the microcontroller, you can begin using OpenBLT to perform firmware updates over supported communication interfaces such as UART, and CAN, <!-- USB, or TCP/IP,--> depending on your configuration.
 Feaser provides several tools to interface with the bootloader and flash application binaries:   
@@ -69,6 +73,7 @@ Feaser provides several tools to interface with the bootloader and flash applica
 - **MicroBoot** – a GUI-based utility.
 - **OpenBLT Library** – for integrating firmware updates into custom host applications 
 - **OpenBLT Embedded Library (LibMicroBLT)** - The LibMicroBLT library encompasses all the functionality needed to perform a firmware update on another microcontroller, running the OpenBLT bootloader.
+  
 ### Using BootCommander to flash to openBLT Bootloader
 
 You can flash firmware binaries to the target platform using the BootCommander utility.
