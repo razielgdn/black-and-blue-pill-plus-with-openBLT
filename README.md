@@ -62,10 +62,83 @@ You can flash the bootloader using any tool available to you. Below are two  met
       ![Fig 3. Downloading firmware](doc/images/program03.png)    
    Once completed, **OpenBLT** is now running on the **Bluepill Plus** board.    
 ## Adapting an application to use with openBLT.
-Your embedded application must meet certain integration requirements. The bootloader expects the user application to be located at a specific memory address and to include a valid checksum for verification. 
-1. Update the Linker Script
-2. Configure Vector Offset
-3. 
+Your embedded application must meet certain integration requirements. The bootloader expects the user application to be located at a specific memory address.    
+1. Update the Linker Script. Modify your application’s linker script to relocate the vector table and code start address to match the end of the bootloader. To the Bluepill plus the file `STM32F103C8TX_FLASH.ld`.
+   ```diff
+   /* Entry Point */
+   ENTRY(Reset_Handler)
+
+   /* Highest address of the user mode stack */
+   _estack = ORIGIN(RAM) + LENGTH(RAM);	/* end of "RAM" Ram type memory */
+
+   _Min_Heap_Size = 0x200 ;	/* required amount of heap  */
+   _Min_Stack_Size = 0x400 ;	/* required amount of stack */
+
+   /* Memories definition */
+   MEMORY
+   {
+      RAM	(xrw)	: ORIGIN = 0x20000000,	LENGTH = 20K
+   -  FLASH	(rx)	: ORIGIN = 0x8000000,	LENGTH = 64K-8K /*1000 0000 0000 0010 0000 0000 0000 */
+   +  FLASH	(rx)	: ORIGIN = 0x8002000,	LENGTH = 64K-8K /*1000 0000 0000 0010 0000 0000 0000 */
+   }
+   ```
+2. Configure Vector Offset. 
+   - Set the vector table base address in your application startup code `main.c`, typically using:
+     ```diff 
+     /* Private function prototypes -----------------------------------------------*/
+     +static void VectorBase_Config(void);
+     void SystemClock_Config(void);
+     static void MX_GPIO_Init(void);
+     static void MX_TIM2_Init(void);
+     
+     ...
+     
+     int main(void)
+        {
+        /* USER CODE BEGIN 1 */
+       
+       /* USER CODE END 1 */  
+ 
+       /* MCU Configuration--------------------------------------------------------*/
+     + VectorBase_Config();
+       /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+       HAL_Init();
+ 
+       /* USER CODE BEGIN Init */
+
+       /* USER CODE END Init */
+
+       /* Configure the system clock */
+       SystemClock_Config();
+
+     ...     
+
+     +static void VectorBase_Config(void)
+     +{
+     +/* The constant array with vectors of the vector table is declared externally in the
+     +   * c-startup code.
+     +   */
+     +extern const unsigned long g_pfnVectors[];
+     +
+     +/* Remap the vector table to where the vector table is located for this program. */
+     +SCB->VTOR = (unsigned long)&g_pfnVectors[0];
+     +} /*** end of VectorBase_Config ***/
+     ```
+   - Another Solution is change  VECT_TAB_OFFSET  macro value in `system/system_stm32f1xx.c` and application initialization don't need to be updated.
+     ```diff
+     /*!< Uncomment the following line if you need to use external SRAM  */ 
+     #if defined(STM32F100xE) || defined(STM32F101xE) || defined(STM32F101xG) || defined(STM32F103xE) ||   defined(STM32F103xG)
+     /* #define DATA_IN_ExtSRAM */
+     #endif /* STM32F100xE || STM32F101xE || STM32F101xG || STM32F103xE || STM32F103xG */ 
+     /*!< Uncomment the following line if you need to relocate your vector Table in
+         Internal SRAM. */ 
+     /* #define VECT_TAB_SRAM */
+     -#define VECT_TAB_OFFSET  0x00000000U /*!< Vector Table base offset field.
+     +#define VECT_TAB_OFFSET  0x00002000U /*!< Vector Table base offset field.
+                                        This value must be a multiple of 0x200. */
+     ``` 
+
+
 ## Using OpenBLT  
 Once the bootloader has been successfully flashed onto the microcontroller, you can begin using OpenBLT to perform firmware updates over supported communication interfaces such as UART, and CAN, <!-- USB, or TCP/IP,--> depending on your configuration.
 Feaser provides several tools to interface with the bootloader and flash application binaries:   
