@@ -63,7 +63,8 @@ You can flash the bootloader using any tool available to you. Below are two  met
    Once completed, **OpenBLT** is now running on the **Bluepill Plus** board.    
 ## Adapting an application to use with openBLT.
 Your embedded application must meet certain integration requirements. The bootloader expects the user application to be located at a specific memory address.    
-1. Update the Linker Script. Modify your application’s linker script to relocate the vector table and code start address to match the end of the bootloader. To the Bluepill plus the file `STM32F103C8TX_FLASH.ld`.
+1. Modify your application’s linker script to relocate the vector table and code start address so they begin after the bootloader region.
+For the Bluepill Plus board, this typically involves editing the linker script file: `STM32F103C8TX_FLASH.ld`.
    ```diff
    /* Entry Point */
    ENTRY(Reset_Handler)
@@ -83,7 +84,7 @@ Your embedded application must meet certain integration requirements. The bootlo
    }
    ```
 2. Configure Vector Offset. 
-   - Set the vector table base address in your application startup code `main.c`, typically using:
+   - Set the vector table base address in your application's startup code (e.g., in **main.c**) using the following instructions:
      ```diff 
      /* Private function prototypes -----------------------------------------------*/
      +static void VectorBase_Config(void);
@@ -112,7 +113,13 @@ Your embedded application must meet certain integration requirements. The bootlo
        SystemClock_Config();
 
      ...     
-
+     void Error_Handler(void)
+     {
+     /* USER CODE BEGIN Error_Handler_Debug */
+     /* User can add his own implementation to report the HAL error return state */
+     /* USER CODE END Error_Handler_Debug */
+     }
+ 
      +static void VectorBase_Config(void)
      +{
      +/* The constant array with vectors of the vector table is declared externally in the
@@ -123,8 +130,13 @@ Your embedded application must meet certain integration requirements. The bootlo
      +/* Remap the vector table to where the vector table is located for this program. */
      +SCB->VTOR = (unsigned long)&g_pfnVectors[0];
      +} /*** end of VectorBase_Config ***/
+
+     #ifdef  USE_FULL_ASSERT
+     /**
+     * @brief  Reports the name of the source file and the source line number
+     *         where the assert_param error has occurred.
      ```
-   - Another Solution is change  VECT_TAB_OFFSET  macro value in `system/system_stm32f1xx.c` and application initialization don't need to be updated.
+   - Another solution is to change the **VECT_TAB_OFFSET** macro value in `system/system_stm32f1xx.c`, which eliminates the need to modify the application’s startup initialization code.
      ```diff
      /*!< Uncomment the following line if you need to use external SRAM  */ 
      #if defined(STM32F100xE) || defined(STM32F101xE) || defined(STM32F101xG) || defined(STM32F103xE) ||   defined(STM32F103xG)
@@ -137,8 +149,8 @@ Your embedded application must meet certain integration requirements. The bootlo
      +#define VECT_TAB_OFFSET  0x00002000U /*!< Vector Table base offset field.
                                         This value must be a multiple of 0x200. */
      ``` 
-
-
+3. For instructions on how to compile the demo applications, refer to the [demo documentation](doc/demos/compile-demos.md) 
+   
 ## Using OpenBLT  
 Once the bootloader has been successfully flashed onto the microcontroller, you can begin using OpenBLT to perform firmware updates over supported communication interfaces such as UART, and CAN, <!-- USB, or TCP/IP,--> depending on your configuration.
 Feaser provides several tools to interface with the bootloader and flash application binaries:   
@@ -150,8 +162,74 @@ Feaser provides several tools to interface with the bootloader and flash applica
 ### Using BootCommander to flash to openBLT Bootloader
 
 You can flash firmware binaries to the target platform using the BootCommander utility.
-This project includes example demos to test the flashing process. Refer to the [demo documentation](doc/demos/compile-demos.md) for instructions on how to compile them.
+This project includes example demos to validate the flashing process.
+At this time, **CAN** and **UART** are supported as communication interfaces for flashing firmware with **OpenBLT**.
+#### UART 
+- Using a USB-to-serial converter, connect the GPIO pins as specified in the table below:
+   | Resource  | GPIO | Board Connector | Device           |  
+   |-----------|------|-----------------|------------------|    
+   | USART1_TX | PA9  |       A9        | USB to TTL - Rx  |
+   | USART1_RX | PA10 |       A10       | USB to TTL - Tx  |  
+   |     5V    |  --  |       5V        | USB to TTL - 5V  |
+   |    GND    |  --  |       GND       | USB to TTL - GND |
 
+- Connect the usb to serial converter to the PC and check the device were is mapped. In my case ttyUSB0:
+  ```bash
+  $ sudo dmesg
+  [34918.401991] usb 1-2.2.1: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+  [34918.401994] usb 1-2.2.1: Product: USB-Serial Controller
+  [34918.401996] usb 1-2.2.1: Manufacturer: Prolific Technology Inc.
+  [34918.427744] pl2303 1-2.2.1:1.0: pl2303 converter detected
+  [34918.428988] usb 1-2.2.1: pl2303 converter now attached to ttyUSB0
+  ```
+- Run BootCommander with RS232 parameters:
+   - GPIO Demo
+     ```bash
+     BootCommander/BootCommander -s=xcp -t=xcp_rs232 -d=/dev/ttyUSB0 -b=57600  Demos/BluepillDemo_GPIO/bin/demoGPIO_stm32f103.srec
+     ```
+   - General Timer Demo
+     ```bash
+     BootCommander/BootCommander -s=xcp -t=xcp_rs232 -d=/dev/ttyUSB0 -b=57600  Demos/BluepillDemo_GPIO/bin/demoGPIO_stm32f103.srec
+     ```
+  ![Figure 4. BootCommander with RS232](doc/images/flash01.png)
+  **Note**: You may need to **reset the board** to ensure it enters bootloader mode before flashing.
+#### CAN Bus
+- To use the CAN bus A pair  of pieces of hardware was used in this project. 
+  - CANable V1.0 Nano device. 
+  - TJA1051 driver. 
+- The CANable device should be connected directly to the TJA1051 transceiver, which serves as the interface between the microcontroller and the CAN bus. This setup ensures proper voltage level translation and signal integrity for reliable CAN communication. 
+   |    CTJA1051     | CANable V1.0 Nano|  
+   |-----------------|------------------|
+   |      CAN-L      |        CAN-L     |
+   |      CAN-H      |        CAN-H     |
+   |      5V         |        5V        |
+   |      GND        |        GND       |  
+
+- The TJA1051 transceiver should be connected to the microcontroller's GPIO pins as specified in the table below:    
+   | Resource  | GPIO | Board Connector | Device           |  
+   |-----------|------|-----------------|------------------|    
+   | CAN1_RX   | PB8  |       B8        |  CTJA1051 - CRx  |   
+   | CAN1_TX   | PB9  |       B9        |  CTJA1051 - CTx  |    
+   |     5V    |  --  |       5V        |  CTJA1051 - 5V   |
+   |    GND    |  --  |       GND       |  CTJA1051 - GND  |   
+
+- Once the hardware is properly connected, you can use **BootCommander** with **SocketCAN** to flash the application to the microcontroller via the OpenBLT bootloader.
+  1. Configure the Baudrate as **blt_conf.h** in the system.   
+     ```bash 
+     sudo ip link set can0 type can bitrate 500000
+     ```      
+     ```bash 
+     sudo ip link set up can0 
+     ```      
+  2. Flash with BootCommander.   
+     - Flash the GPIO demo. 
+     ``` 
+     BootCommander/BootCommander -s=xcp -t=xcp_can -d=can0 -b=500000 Demos/BluepillDemo_GPIO/bin/demoGPIO_stm32f103.srec
+     ```    
+     - Flash the Timer demo. 
+     ``` 
+     BootCommander/BootCommander -s=xcp -t=xcp_can -d=can0 -b=500000 Demos/BluepillDemo_GeneralTimer/bin/demoTimer_stm32f103.srec
+     ```
 
 ## Resources used in this project
 ### Blue Pill Plus board

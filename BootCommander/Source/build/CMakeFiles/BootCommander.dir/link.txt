@@ -1,0 +1,1 @@
+/usr/bin/cc  -DPLATFORM_LINUX -DPLATFORM_64BIT -pthread -std=gnu99 -g CMakeFiles/BootCommander.dir/main.c.o -o /home/razielgdn/GitHubRepos/black-and-blue-pill-plus-with-openBLT/BootCommander/BootCommander   -L/home/razielgdn/GitHubRepos/black-and-blue-pill-plus-with-openBLT/BootCommander/Source/build/../..  -Wl,-rpath,"\$ORIGIN" -lopenblt 

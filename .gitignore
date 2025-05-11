@@ -54,7 +54,7 @@ dkms.conf
 # IDE configs
 .vscode/
 BootCommander/BootCommander
-# BootCommander/Source/build/
+BootCommander/Source/build/*
 BootCommander/LibOpenBLT/build/*
 Demos/BluepillDemo_GeneralTimer/bin/*
 Demos/BluepillDemo_GPIO/bin/*

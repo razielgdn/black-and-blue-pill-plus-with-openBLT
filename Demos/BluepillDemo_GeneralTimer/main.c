@@ -247,7 +247,6 @@ static void VectorBase_Config(void)
   SCB->VTOR = (unsigned long)&g_pfnVectors[0];
 } /*** end of VectorBase_Config ***/
 
-
 #ifdef  USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
