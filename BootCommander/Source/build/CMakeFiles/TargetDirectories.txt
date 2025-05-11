@@ -1,3 +1,0 @@
-/home/razielgdn/GitHubRepos/black-and-blue-pill-plus-with-openBLT/BootCommander/Source/build/CMakeFiles/BootCommander.dir
-/home/razielgdn/GitHubRepos/black-and-blue-pill-plus-with-openBLT/BootCommander/Source/build/CMakeFiles/edit_cache.dir
-/home/razielgdn/GitHubRepos/black-and-blue-pill-plus-with-openBLT/BootCommander/Source/build/CMakeFiles/rebuild_cache.dir
