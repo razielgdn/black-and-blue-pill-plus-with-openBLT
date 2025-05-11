@@ -54,18 +54,25 @@ You can flash the bootloader using any tool available to you. Below are two  met
   
    - [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html) (STM32CubeProg) is an all-in-one multi-OS software tool for programming STM32 products. You can use UART, STLINK or J-link.    
    The programmer supports multiple output formats, including **srec**, **bin**, and **elf**.   
-      - Open STMCubeProgrammer and connect with the microcontroller in STM boot mode    
-      ![Fig 1. STM32CubeProgrammer connected](doc/images/program01.png)
+      - Open STMCubeProgrammer and connect with the microcontroller in STM boot mode      
+      ![Fig 1. STM32CubeProgrammer connected](doc/images/program01.png)    
       - Load the desired output file, for example: ```bin/openblt_stm32f103.bin```    
-      ![Fig 2. File loaded](doc/images/program02.png)
-      - Click the Download button to flash the binary onto the microcontroller. 
-      ![Fig 3. Downloading firmware](doc/images/program03.png)
-   Once completed, **OpenBLT** is now running on the **Bluepill Plus** board.
+      ![Fig 2. File loaded](doc/images/program02.png)    
+      - Click the Download button to flash the binary onto the microcontroller.  
+      ![Fig 3. Downloading firmware](doc/images/program03.png)    
+   Once completed, **OpenBLT** is now running on the **Bluepill Plus** board.    
 
 ## Using OpenBLT  
 Once the bootloader has been successfully flashed onto the microcontroller, you can begin using OpenBLT to perform firmware updates over supported communication interfaces such as UART, and CAN, <!-- USB, or TCP/IP,--> depending on your configuration.
+Feaser provides several tools to interface with the bootloader and flash application binaries:   
+- [BootCommander](https://www.feaser.com/openblt/doku.php?id=manual:bootcommander)  – a command-line utility.
+- **MicroBoot** – a GUI-based utility.
+- **OpenBLT Library** – for integrating firmware updates into custom host applications 
+- **OpenBLT Embedded Library (LibMicroBLT)** - The LibMicroBLT library encompasses all the functionality needed to perform a firmware update on another microcontroller, running the OpenBLT bootloader.
+### Using BootCommander to flash to openBLT Bootloader
 
-Feaser provides [Bootcommander](https://www.feaser.com/openblt/doku.php?id=manual:bootcommander) utility, MicroBoot utility, and OpenBLT Library to flash the binaries to the Microcontroller. 
+You can flash firmware binaries to the target platform using the BootCommander utility.
+This project includes example demos to test the flashing process. Refer to the [demo documentation](doc/demos/compile-demos.md) for instructions on how to compile them.
 
 
 ## Resources used in this project

@@ -48,6 +48,7 @@ TIM_HandleTypeDef htim2;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
+static void VectorBase_Config(void);
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM2_Init(void);
@@ -77,7 +78,7 @@ int main(void)
   
 
   /* MCU Configuration--------------------------------------------------------*/
-
+  VectorBase_Config();
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
@@ -235,6 +236,18 @@ void Error_Handler(void)
 
   /* USER CODE END Error_Handler_Debug */
 }
+
+static void VectorBase_Config(void)
+{
+  /* The constant array with vectors of the vector table is declared externally in the
+   * c-startup code.
+   */
+  extern const unsigned long g_pfnVectors[];
+
+  /* Remap the vector table to where the vector table is located for this program. */
+  SCB->VTOR = (unsigned long)&g_pfnVectors[0];
+} /*** end of VectorBase_Config ***/
+
 
 #ifdef  USE_FULL_ASSERT
 /**
