@@ -1,3 +1,0 @@
-/home/octavioguendulain/github-repos/black-and-blue-pill-plus-with-openBLT/openBLTWbluepill/test-applications/BootCommander/LibOpenBLT/build/CMakeFiles/openblt_shared.dir
-/home/octavioguendulain/github-repos/black-and-blue-pill-plus-with-openBLT/openBLTWbluepill/test-applications/BootCommander/LibOpenBLT/build/CMakeFiles/edit_cache.dir
-/home/octavioguendulain/github-repos/black-and-blue-pill-plus-with-openBLT/openBLTWbluepill/test-applications/BootCommander/LibOpenBLT/build/CMakeFiles/rebuild_cache.dir
