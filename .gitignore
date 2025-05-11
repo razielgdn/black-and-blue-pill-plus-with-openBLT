@@ -53,8 +53,11 @@ Mkfile.old
 dkms.conf
 # IDE configs
 .vscode/
-BootCommander/BootCommander
+# BootCommander/BootCommander
 BootCommander/Source/build/*
-BootCommander/LibOpenBLT/build/*
+BootCommander/LibOpenBLT/build/CMakeCache.txt
+BootCommander/LibOpenBLT/build/CMakeFiles/*
+BootCommander/LibOpenBLT/build/cmake_install.cmake
+BootCommander/LibOpenBLT/build/Makefile
 Demos/BluepillDemo_GeneralTimer/bin/*
 Demos/BluepillDemo_GPIO/bin/*
