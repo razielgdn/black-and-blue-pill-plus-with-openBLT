@@ -26,32 +26,48 @@ After updating the path, compile the bootloader with:
    make clean all
    ``` 
 4. If everything compiles successfully, the output files will be located in the **bin/** directory. You can use any of the generated binaries as needed.
-   ``` 
+   ```
    openblt_stm32f103.elf
    openblt_stm32f103.map
    openblt_stm32f103.srec
    ```
 
-## Flash the bootloader
+## Flashing the bootloader
 To enter boot mode on a **Blue Pill Plus (STM32F103C8T6)**, follow these steps:
    1. Hold down the **BOOT0** button.
    2. While holding **BOOT0**, press and release the **NRST** (reset) button.
    3. Then release the **BOOT0** button.
 
-You can Flash the bootloader with any tool available for you.
-For example:    
-   - [**stm32flash**](https://sourceforge.net/p/stm32flash/wiki/Home/). Open source cross platform flash program for the STM32 ARM microcontrollers using the built-in ST serial bootloader over UART or I$^{2}$C. 
-   In my case I used following line to flash with this application.   
-      ```bash
-      stm32flash -b 115200 -w Source-openBLT/bin/openblt_stm32f103.bin /dev/ttyUSB0 
-      ```    
-   **Note:** *To create binary file (openblt_stm32f103.bin) you should create the file:*
-   ```bash
-      make bin/openblt_stm32f103.bin 
-   ```    
-   - [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html) (STM32CubeProg) is an all-in-one multi-OS software tool for programming STM32 products. You can use UART, STLINK or J-link. 
+You can flash the bootloader using any tool available to you. Below are two  methods:
+   - [**stm32flash**](https://sourceforge.net/p/stm32flash/wiki/Home/). An open-source cross-platform flash tool for STM32 ARM microcontrollers, using the built-in ST serial bootloader over UART or I²C.     
+     - **To generate the binary file (openblt_stm32f103.bin) run:**   
+       ```bash
+       cd openBLT_STM32F103_Bluepill_plus_GCC/     
+       ```     
+       ```bash  
+       make bin/openblt_stm32f103.bin 
+       ```
+     - **To flash the bootloader using ```stm32flash```, run the following command:**    
+       ```bash 
+       stm32flash -b 115200 -w bin/openblt_stm32f103.bin -g 0x0 /dev/ttyUSB0
+       ```       
+  
+   - [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html) (STM32CubeProg) is an all-in-one multi-OS software tool for programming STM32 products. You can use UART, STLINK or J-link.    
+   The programmer supports multiple output formats, including **srec**, **bin**, and **elf**.   
+      - Open STMCubeProgrammer and connect with the microcontroller in STM boot mode    
+      ![Fig 1. STM32CubeProgrammer connected](doc/images/program01.png)
+      - Load the desired output file, for example: ```bin/openblt_stm32f103.bin```    
+      ![Fig 2. File loaded](doc/images/program02.png)
+      - Click the Download button to flash the binary onto the microcontroller. 
+      ![Fig 3. Downloading firmware](doc/images/program03.png)
+   Once completed, **OpenBLT** is now running on the **Bluepill Plus** board.
 
-    
+## Using OpenBLT  
+Once the bootloader has been successfully flashed onto the microcontroller, you can begin using OpenBLT to perform firmware updates over supported communication interfaces such as UART, and CAN, <!-- USB, or TCP/IP,--> depending on your configuration.
+
+Feaser provides [Bootcommander](https://www.feaser.com/openblt/doku.php?id=manual:bootcommander) utility, MicroBoot utility, and OpenBLT Library to flash the binaries to the Microcontroller. 
+
+
 ## Resources used in this project
 ### Blue Pill Plus board
 The documentation for the device is available in its [GitHub repository](https://github.com/WeActStudio/BluePill-Plus), and a good summary can also be found on [stm32-base.org](https://stm32-base.org/boards/STM32F103C8T6-WeAct-Blue-Pill-Plus-Clone).    
@@ -70,4 +86,10 @@ Comments
  2036  BootCommander/BootCommander -s=xcp -t=xcp_rs232 -d=/dev/ttyUSB0 -b=57600 test-applications/BluepillDemo_GPIO/bin/demoGPIO_stm32f103.srec 
  2037  BootCommander/BootCommander -s=xcp -t=xcp_rs232 -d=/dev/ttyUSB0 -b=57600 test-applications/BluepillDemo_GeneralTimer/bin/demoTimer_stm32f103.srec 
  2038  history 
+
+Note: To generate the binary file openblt_stm32f103.bin, run:
+
+cd openBLT_STM32F103_Bluepill_plus_GCC/
+make bin/openblt_stm32f103.bin 
+
  --> 
