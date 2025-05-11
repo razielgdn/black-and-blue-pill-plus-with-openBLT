@@ -40,14 +40,17 @@ To enter boot mode on a **Blue Pill Plus (STM32F103C8T6)**, follow these steps:
 
 You can Flash the bootloader with any tool available for you.
 For example:    
-   - [**stm32flash**](https://sourceforge.net/p/stm32flash/wiki/Home/). Open source cross platform flash program for the STM32 ARM microcontrollers using the built-in ST serial bootloader over UART or I$^{2}$C
+   - [**stm32flash**](https://sourceforge.net/p/stm32flash/wiki/Home/). Open source cross platform flash program for the STM32 ARM microcontrollers using the built-in ST serial bootloader over UART or I$^{2}$C. 
+   In my case I used following line to flash with this application.   
+      ```bash
+      stm32flash -b 115200 -w Source-openBLT/bin/openblt_stm32f103.bin /dev/ttyUSB0 
+      ```    
+   **Note:** *To create binary file (openblt_stm32f103.bin) you should create the file:*
+   ```bash
+      make bin/openblt_stm32f103.bin 
+   ```    
    - [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html) (STM32CubeProg) is an all-in-one multi-OS software tool for programming STM32 products. You can use UART, STLINK or J-link. 
 
-In my own case I use UART with stm32flash. 
-```bash
-stm32flash -b 57600 -w openblt_stm32f103.elf -v 
-
-```
     
 ## Resources used in this project
 ### Blue Pill Plus board
@@ -58,5 +61,13 @@ The documentation for the device is available in its [GitHub repository](https:/
 
 ### Test applications
 The test applications were obtained from **John Blaiklock’s** [GitHub repository](https://github.com/miniwinwm/BluePillDemo), and the original source code was adapted for this project.    
-
-
+<!-- …
+Comments
+ 2032  stm32flash -b 115200 -w bin/openblt_stm32f103.bin /dev/ttyUSB0 
+ 2033  stm32flash -b 115200 -w Source-openBLT/bin/openblt_stm32f103.bin /dev/ttyUSB0 
+ 2034  stm32flash -b 115200 -w openBLT_STM32F103_Bluepill_plus_GCC/bin/openblt_stm32f103.bin /dev/ttyUSB0 
+ 2035  ./BootCommander -s=xcp -t=xcp_rs232 -d=/dev/ttyUSB0 -b=57600 ../test-applications/BluepillDemo_GPIO/bin/demoGPIO_stm32f103.srec 
+ 2036  BootCommander/BootCommander -s=xcp -t=xcp_rs232 -d=/dev/ttyUSB0 -b=57600 test-applications/BluepillDemo_GPIO/bin/demoGPIO_stm32f103.srec 
+ 2037  BootCommander/BootCommander -s=xcp -t=xcp_rs232 -d=/dev/ttyUSB0 -b=57600 test-applications/BluepillDemo_GeneralTimer/bin/demoTimer_stm32f103.srec 
+ 2038  history 
+ --> 
