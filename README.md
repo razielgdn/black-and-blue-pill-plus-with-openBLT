@@ -1,12 +1,29 @@
 # OpenBLT running on Bluepill Plus and Blackpill boards.
-This project enables the use of the **OpenBLT** **bootloader** on **Bluepill** **Plus** and Blackpill development boards, providing a lightweight and flexible solution for firmware updates on STM32-based systems.    
 
 ## Introduction
-At this moment, the bootloader is ready to be used with RS232 and CAN buses.
-I’m developing this project because I want to use the CAN protocol to flash a network of microcontrollers for future applications — such as an aquaponic system designed to raise fish, crustaceans, and plants. These microcontrollers will be used to control irrigation, lighting, and humidity, enabling automated and efficient system management.
+This project enables the use of the **OpenBLT** **bootloader** on **Bluepill** **Plus** and Blackpill development boards, providing a lightweight and flexible solution for firmware updates on STM32-based systems.  
+### Motivation
+This project was developed with the goal of enabling firmware flashing over the **CAN protocol** for a network of microcontrollers. In future applications—such as an automated aquaponic system for raising fish, crustaceans, and plants—these microcontrollers will manage subsystems like irrigation, lighting, and humidity. Reliable, scalable firmware updates are essential for maintaining such a distributed control system.
+
+### STM32F103C8T6 Bluepill plus board
+At this stage, the OpenBLT bootloader is fully operational over both RS232 and CAN interfaces on the **Bluepill plus** board.    
+
+The documentation for the device is available in its [GitHub repository](https://github.com/WeActStudio/BluePill-Plus), and a good summary can also be found on [stm32-base.org](https://stm32-base.org/boards/STM32F103C8T6-WeAct-Blue-Pill-Plus-Clone).  
+
+### STM32F411CEU6 Blackpill V3.0 board
+I’m also evaluating the Blackpill V3.0 board for future use. While it lacks built-in CAN support and is a lower priority for OpenBLT migration, I plan to port the bootloader once the Bluepill-based implementation is complete.   
+Documentation is available in the board’s [GitHub repository](https://github.com/WeActStudio/WeActStudio.BlackPill). Based on the schematic and hardware details, the STM32F411 MCU appears to be largely compatible with the STM32F403, requiring only minor adaptations for development.
+A helpful summary is also provided at [stm32-base.org](https://stm32-base.org/boards/STM32F401CEU6-WeAct-Black-Pill-V3.0).  
+
+### OpenBLT Bootloader
+**OpenBLT** is open source and licensed under the GNU General Public License v3 (GPLv3). It was created and is maintained by **Feaser**. You can visit their [official website](https://www.feaser.com/openblt/doku.php?id=homepage) for more information and documentation.     
+
+### Test applications
+The test applications were obtained from **John Blaiklock’s** [GitHub repository](https://github.com/miniwinwm/BluePillDemo), and the original source code was adapted for this project.  
 
 ## Compile the bootloader
-Follow next steps to compile the bootloader maybe you will need install some prerequire packages.    
+Follow the steps below to compile the bootloader. You may need to install some prerequisite packages depending on your system configuration.    
+
 1. Clone the repo. 
    - Using https:    
    ```bash  
@@ -22,7 +39,7 @@ Follow next steps to compile the bootloader maybe you will need install some pre
    ``` 
 3. Make sure the path to your ARM GCC toolchain(e.g. `arm-none-eabi-gcc`) is correctly set in the **makefile**.   
 After updating the path, compile the bootloader with:         
-   ```bash 
+   ```bash
    make clean all
    ``` 
 4. If everything compiles successfully, the output files will be located in the **bin/** directory. You can use any of the generated binaries as needed.
@@ -154,17 +171,22 @@ For the Bluepill Plus board, this typically involves editing the linker script f
 ## Using OpenBLT  
 Once the bootloader has been successfully flashed onto the microcontroller, you can begin using OpenBLT to perform firmware updates over supported communication interfaces such as UART, and CAN, <!-- USB, or TCP/IP,--> depending on your configuration.
 Feaser provides several tools to interface with the bootloader and flash application binaries:   
+
 - [BootCommander](https://www.feaser.com/openblt/doku.php?id=manual:bootcommander)  – a command-line utility.
+
 - **MicroBoot** – a GUI-based utility.
+
 - **OpenBLT Library** – for integrating firmware updates into custom host applications 
+
 - **OpenBLT Embedded Library (LibMicroBLT)** - The LibMicroBLT library encompasses all the functionality needed to perform a firmware update on another microcontroller, running the OpenBLT bootloader.
   
-### Using BootCommander to flash to openBLT Bootloader
+## Using BootCommander to flash to openBLT Bootloader
 
 You can flash firmware binaries to the target platform using the BootCommander utility.
 This project includes example demos to validate the flashing process.
 At this time, **CAN** and **UART** are supported as communication interfaces for flashing firmware with **OpenBLT**.
-#### UART 
+
+### UART 
 - Using a USB-to-serial converter, connect the GPIO pins as specified in the table below:
    | Resource  | GPIO | Board Connector | Device           |  
    |-----------|------|-----------------|------------------|    
@@ -191,13 +213,18 @@ At this time, **CAN** and **UART** are supported as communication interfaces for
      ```bash
      BootCommander/BootCommander -s=xcp -t=xcp_rs232 -d=/dev/ttyUSB0 -b=57600  Demos/BluepillDemo_GPIO/bin/demoGPIO_stm32f103.srec
      ```
-  ![Figure 4. BootCommander with RS232](doc/images/flash01.png)
+  The following figure shows the terminal output generated during the use of BootCommander.    
+  
+  ![Figure 4. BootCommander with RS232](doc/images/flash01.png)       
+
   **Note**: You may need to **reset the board** to ensure it enters bootloader mode before flashing.
-#### CAN Bus
-- To use the CAN bus A pair  of pieces of hardware was used in this project. 
+
+### CAN Bus
+To use the CAN bus A pair  of pieces of hardware was used in this project. 
   - CANable V1.0 Nano device. 
   - TJA1051 driver. 
-- The CANable device should be connected directly to the TJA1051 transceiver, which serves as the interface between the microcontroller and the CAN bus. This setup ensures proper voltage level translation and signal integrity for reliable CAN communication. 
+
+The CANable device should be connected directly to the TJA1051 transceiver, which serves as the interface between the microcontroller and the CAN bus. This setup ensures proper voltage level translation and signal integrity for reliable CAN communication. 
    |    CTJA1051     | CANable V1.0 Nano|  
    |-----------------|------------------|
    |      CAN-L      |        CAN-L     |
@@ -205,7 +232,7 @@ At this time, **CAN** and **UART** are supported as communication interfaces for
    |      5V         |        5V        |
    |      GND        |        GND       |  
 
-- The TJA1051 transceiver should be connected to the microcontroller's GPIO pins as specified in the table below:    
+The TJA1051 transceiver should be connected to the microcontroller's GPIO pins as specified in the table below:    
    | Resource  | GPIO | Board Connector | Device           |  
    |-----------|------|-----------------|------------------|    
    | CAN1_RX   | PB8  |       B8        |  CTJA1051 - CRx  |   
@@ -222,24 +249,15 @@ At this time, **CAN** and **UART** are supported as communication interfaces for
      sudo ip link set up can0 
      ```      
   2. Flash with BootCommander.   
-     - Flash the GPIO demo. 
-     ``` 
-     BootCommander/BootCommander -s=xcp -t=xcp_can -d=can0 -b=500000 Demos/BluepillDemo_GPIO/bin/demoGPIO_stm32f103.srec
-     ```    
-     - Flash the Timer demo. 
-     ``` 
-     BootCommander/BootCommander -s=xcp -t=xcp_can -d=can0 -b=500000 Demos/BluepillDemo_GeneralTimer/bin/demoTimer_stm32f103.srec
-     ```
-
-## Resources used in this project
-### Blue Pill Plus board
-The documentation for the device is available in its [GitHub repository](https://github.com/WeActStudio/BluePill-Plus), and a good summary can also be found on [stm32-base.org](https://stm32-base.org/boards/STM32F103C8T6-WeAct-Blue-Pill-Plus-Clone).    
-
-### OpenBLT Bootloader
-**OpenBLT** is open source and licensed under the GNU General Public License v3 (GPLv3). It was created and is maintained by **Feaser**. You can visit their [official website](https://www.feaser.com/openblt/doku.php?id=homepage) for more information and documentation.     
-
-### Test applications
-The test applications were obtained from **John Blaiklock’s** [GitHub repository](https://github.com/miniwinwm/BluePillDemo), and the original source code was adapted for this project.    
+     - To flash the **GPIO demo**:
+       ```bash 
+       BootCommander/BootCommander -s=xcp -t=xcp_can -d=can0 -b=500000 Demos/BluepillDemo_GPIO/bin/demoGPIO_stm32f103.srec
+       ```    
+     - To flash the **Timer demo**:
+       ```bash 
+       BootCommander/BootCommander -s=xcp -t=xcp_can -d=can0 -b=500000 Demos/ BluepillDemo_GeneralTimer/bin/demoTimer_stm32f103.srec
+       ```
+ **Note:** As with UART flashing, you may need to reset or power-cycle the board to ensure it enters bootloader mode before flashing.  
 <!--
 The documentation should be updated
  --> 
