@@ -53,7 +53,7 @@ Mkfile.old
 dkms.conf
 # IDE configs
 .vscode/
-BootCommander/BootCommander
+#BootCommander/BootCommander
 #BootCommander/Source/build/*
 #BootCommander/LibOpenBLT/build/*
 Demos/BluepillDemo_GeneralTimer/bin/*

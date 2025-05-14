@@ -43,7 +43,7 @@ PROJ_NAME=openblt_stm32f103
 #TOOL_PATH=/opt/gcc-arm-none-eabi-8-2018-q4-major/bin/
 #TOOL_PATH=C:/PROGRA~2/GNUTOO~1/82018-~1/bin/
 TOOL_PATH=/opt/gcc-arm-none-eabi-10.3-2021.10/bin/
-
+#TOOL_PATH=~/arm-tools/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi/bin/
 
 #|--------------------------------------------------------------------------------------|
 #| Collect project files                                                                |
