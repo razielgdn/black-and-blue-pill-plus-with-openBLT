@@ -23,13 +23,13 @@
 #| should be located in ".\Doc\license.html". If not, contact Feaser to obtain a copy.
 #|
 #****************************************************************************************
+
 SHELL = sh
 
 #|--------------------------------------------------------------------------------------|
 #| Configure project name                                                               |
 #|--------------------------------------------------------------------------------------|
 PROJ_NAME=openblt_stm32f103
-
 
 #|--------------------------------------------------------------------------------------|
 #| Configure tool path                                                                  |
@@ -40,10 +40,9 @@ PROJ_NAME=openblt_stm32f103
 # 8.3 short pathname format with forward slashes. To obtain the pathname in the 8.3
 # format, open the directory in the Windows command prompt and run the following command:
 #  cmd /c for %A in ("%cd%") do @echo %~sA 
-#TOOL_PATH=/opt/gcc-arm-none-eabi-8-2018-q4-major/bin/
 #TOOL_PATH=C:/PROGRA~2/GNUTOO~1/82018-~1/bin/
-TOOL_PATH=/opt/gcc-arm-none-eabi-10.3-2021.10/bin/
-
+#TOOL_PATH=~/arm-tools/gcc-arm-none-eabi-10.3-2021.10/bin/
+TOOL_PATH=~/arm-tools/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi/bin/
 
 #|--------------------------------------------------------------------------------------|
 #| Collect project files                                                                |
@@ -80,13 +79,11 @@ OD = $(TOOL_PATH)arm-none-eabi-objdump
 AS = $(TOOL_PATH)arm-none-eabi-gcc
 SZ = $(TOOL_PATH)arm-none-eabi-size
 
-
 #|--------------------------------------------------------------------------------------|
 #| Filter project files
 #|--------------------------------------------------------------------------------------|
 PROJ_ASRCS  = $(filter %.s,$(foreach file,$(PROJ_FILES),$(notdir $(file))))
 PROJ_CSRCS  = $(filter %.c,$(foreach file,$(PROJ_FILES),$(notdir $(file))))
-
 
 #|--------------------------------------------------------------------------------------|
 #| Set important path variables                                                         |
@@ -97,13 +94,13 @@ BIN_PATH = bin
 INC_PATH = $(patsubst %/,%,$(patsubst %,-I%,$(sort $(foreach file,$(filter %.h,$(PROJ_FILES)),$(dir $(file))))))
 LIB_PATH  = 
 
-
 #|--------------------------------------------------------------------------------------|
 #| Options for toolchain binaries                                                       |
 #|--------------------------------------------------------------------------------------|
+
 STDFLAGS    = -mcpu=cortex-m3 -mthumb -std=gnu11 -fstack-usage -Wall -specs=nano.specs
 STDFLAGS   += -fdata-sections -ffunction-sections -Wall -g -Wno-strict-aliasing
-OPTFLAGS    = -Os
+OPTFLAGS    = -Os -flto
 DEPFLAGS  = -MT $@ -MMD -MP -MF $(OBJ_PATH)/$*.d
 CFLAGS      = $(STDFLAGS) $(OPTFLAGS)
 CFLAGS     += -DUSE_FULL_LL_DRIVER -DUSE_HAL_DRIVER -DSTM32F103xB
@@ -118,12 +115,10 @@ ODFLAGS     = -x
 SZFLAGS     = -B -d
 RMFLAGS     = -f
 
-
 #|--------------------------------------------------------------------------------------|
 #| Specify library files                                                                |
 #|--------------------------------------------------------------------------------------|
 LIBS = 
-
 
 #|--------------------------------------------------------------------------------------|
 #| Define targets                                                                       |
@@ -131,12 +126,10 @@ LIBS =
 AOBJS = $(patsubst %.s,%.o,$(PROJ_ASRCS))
 COBJS = $(patsubst %.c,%.o,$(PROJ_CSRCS))
 
-
 #|--------------------------------------------------------------------------------------|
 #| Make ALL                                                                             |
 #|--------------------------------------------------------------------------------------|
 .PHONY: prepare_dirs
-
 prepare_dirs:
 	mkdir -p $(OBJ_PATH)
 	mkdir -p $(BIN_PATH)
@@ -158,9 +151,7 @@ $(BIN_PATH)/$(PROJ_NAME).elf : $(AOBJS) $(COBJS)
 .PHONY: $(BIN_PATH)/$(PROJ_NAME).bin
 $(BIN_PATH)/$(PROJ_NAME).bin:                              #$(AOBJS) $(COBJS) 
 	 @$(OC)  -O binary $(BIN_PATH)/$(PROJ_NAME).elf $@
-    
-
-
+  
 #|--------------------------------------------------------------------------------------|
 #| Compile and assemble                                                                 |
 #|--------------------------------------------------------------------------------------|
@@ -171,7 +162,6 @@ $(AOBJS): %.o: %.s
 $(COBJS): %.o: %.c $(OBJ_PATH)/%.d
 	@echo +++ Compiling [$(notdir $<)]
 	@$(CC) $(DEPFLAGS) $(CFLAGS) -c $< -o $(OBJ_PATH)/$(@F)
-
 
 #|--------------------------------------------------------------------------------------|
 #| Make CLEAN                                                                           |
@@ -188,7 +178,6 @@ clean:
 	@$(RM) $(RMFLAGS) $(BIN_PATH)/$(PROJ_NAME).elf $(BIN_PATH)/$(PROJ_NAME).map
 	@$(RM) $(RMFLAGS) $(BIN_PATH)/$(PROJ_NAME).srec
 	@echo +++ Clean complete
-
 	
 #|--------------------------------------------------------------------------------------|
 #| Dependency generation                                                                |

@@ -1,7 +1,7 @@
 /************************************************************************************//**
-* \file         Demo/ARMCM3_STM32F1_Nucleo_F103RB_GCC/Boot/main.c
+* \file         main.c
 * \brief        Bootloader application source file.
-* \ingroup      Boot_ARMCM3_STM32F1_Nucleo_F103RB_GCC
+* \ingroup      Boot_ARMCM3_STM32F1_Nucleo_F103C8TX_GCC
 * \internal
 *----------------------------------------------------------------------------------------
 *                          C O P Y R I G H T
@@ -146,7 +146,7 @@ void HAL_MspInit(void)
   /* GPIO ports clock enable. */
   LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_GPIOA);
   LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_GPIOB);
-  LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_GPIOC);
+  //LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_GPIOC);
 
 #if (BOOT_COM_RS232_ENABLE > 0)
   /* UART clock enable. */
@@ -167,9 +167,9 @@ void HAL_MspInit(void)
   LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_2);
 
   /* Configure GPIO pin for (optional) backdoor entry input. */
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_13;
-  GPIO_InitStruct.Mode = LL_GPIO_MODE_FLOATING;
-  LL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+ //GPIO_InitStruct.Pin = LL_GPIO_PIN_13;
+  //GPIO_InitStruct.Mode = LL_GPIO_MODE_FLOATING;
+ // LL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
 #if (BOOT_COM_RS232_ENABLE > 0)
   /* UART TX and RX GPIO pin configuration. */
@@ -212,7 +212,7 @@ void HAL_MspDeInit(void)
   LL_RCC_DeInit();
   
   /* Deinit used GPIOs. */
-  LL_GPIO_DeInit(GPIOC);
+  //LL_GPIO_DeInit(GPIOC);
   LL_GPIO_DeInit(GPIOB);
   LL_GPIO_DeInit(GPIOA);
 
@@ -227,7 +227,7 @@ void HAL_MspDeInit(void)
 #endif
 
   /* GPIO ports clock disable. */
-  LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_GPIOC);
+  // LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_GPIOC);
   LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_GPIOB);
   LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_GPIOA);
 
