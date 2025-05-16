@@ -42,6 +42,7 @@ After updating the path, compile the bootloader with:
    ```bash
    make clean all
    ``` 
+  You can see how to configure the compiler in the [complementary documentation](/doc/Required-Tools.md)  
 4. If everything compiles successfully, the output files will be located in the **bin/** directory. You can use any of the generated binaries as needed.
    ```
    openblt_stm32f103.elf
