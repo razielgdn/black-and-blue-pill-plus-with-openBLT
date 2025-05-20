@@ -193,6 +193,7 @@ g_pfnVectors:
   .word 0
   .word BootRAM          /* @0x108. This is for boot in RAM mode for
                             STM32F10x Medium Density devices. */
+  .word     0x55AA11EE   /* Reserved for OpenBLT checksum*/                          
 
 /*******************************************************************************
 *
