@@ -137,7 +137,7 @@ prepare_dirs:
 .PHONY: all
 all: prepare_dirs $(BIN_PATH)/$(PROJ_NAME).srec 
 
-$(BIN_PATH)/$(PROJ_NAME).srec : $(BIN_PATH)/$(PROJ_NAME).elf 
+$(BIN_PATH)/$(PROJ_NAME).srec : $(BIN_PATH)/$(PROJ_NAME).elf
 	@$(OC) $< $(OFLAGS) $@
 	@$(OD) $(ODFLAGS) $< > $(BIN_PATH)/$(PROJ_NAME).map
 	@echo +++ Summary of memory consumption:
@@ -149,7 +149,7 @@ $(BIN_PATH)/$(PROJ_NAME).elf : $(AOBJS) $(COBJS)
 	@$(LN) $(LFLAGS) -o $@ $(patsubst %.o,$(OBJ_PATH)/%.o,$(^F)) $(LIBS)
 	
 .PHONY: $(BIN_PATH)/$(PROJ_NAME).bin
-$(BIN_PATH)/$(PROJ_NAME).bin:                              #$(AOBJS) $(COBJS) 
+$(BIN_PATH)/$(PROJ_NAME).bin:
 	 @$(OC)  -O binary $(BIN_PATH)/$(PROJ_NAME).elf $@
   
 #|--------------------------------------------------------------------------------------|
@@ -162,6 +162,7 @@ $(AOBJS): %.o: %.s
 $(COBJS): %.o: %.c $(OBJ_PATH)/%.d
 	@echo +++ Compiling [$(notdir $<)]
 	@$(CC) $(DEPFLAGS) $(CFLAGS) -c $< -o $(OBJ_PATH)/$(@F)
+
 
 #|--------------------------------------------------------------------------------------|
 #| Make CLEAN                                                                           |
