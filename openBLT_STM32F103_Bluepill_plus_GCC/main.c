@@ -146,9 +146,8 @@ void HAL_MspInit(void)
   /* GPIO ports clock enable. */
   LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_GPIOA);
   LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_GPIOB);
-#if (BOOT_BACKDOOR_HOOKS_ENABLE > 0)
   LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_GPIOC);
-#endif
+
 
 #if (BOOT_COM_RS232_ENABLE > 0)
   /* UART clock enable. */
@@ -168,12 +167,13 @@ void HAL_MspInit(void)
   LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
   LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_2);
 
-  /* Configure GPIO pin for (optional) backdoor entry input. */
+ /* Configure GPIO pin for (optional) backdoor entry input. */
 #if (BOOT_BACKDOOR_HOOKS_ENABLE > 0)
   GPIO_InitStruct.Pin = LL_GPIO_PIN_13;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_FLOATING;
   LL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 #endif 
+
 #if (BOOT_COM_RS232_ENABLE > 0)
   /* UART TX and RX GPIO pin configuration. */
   GPIO_InitStruct.Pin = LL_GPIO_PIN_9;   //TX: Serial1 PA9, Serial2 PA2, Serial3 PB11
@@ -215,9 +215,7 @@ void HAL_MspDeInit(void)
   LL_RCC_DeInit();
   
   /* Deinit used GPIOs. */
-#if (BOOT_BACKDOOR_HOOKS_ENABLE > 0)
   LL_GPIO_DeInit(GPIOC);
-#endif
   LL_GPIO_DeInit(GPIOB);
   LL_GPIO_DeInit(GPIOA);
 
@@ -232,9 +230,7 @@ void HAL_MspDeInit(void)
 #endif
 
   /* GPIO ports clock disable. */
-#if (BOOT_BACKDOOR_HOOKS_ENABLE > 0)  
-   LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_GPIOC);
-#endif 
+  LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_GPIOC);
   LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_GPIOB);
   LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_GPIOA);
 
