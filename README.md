@@ -259,6 +259,13 @@ The TJA1051 transceiver should be connected to the microcontroller's GPIO pins a
        BootCommander/BootCommander -s=xcp -t=xcp_can -d=can0 -b=500000 Demos/ BluepillDemo_GeneralTimer/bin/demoTimer_stm32f103.srec
        ```
  **Note:** As with UART flashing, you may need to reset or power-cycle the board to ensure it enters bootloader mode before flashing.  
-<!--
-The documentation should be updated
- --> 
+ Watch the flashing process in youtube
+# 🎥 Flashing Tutorial Video
+You can watch the full process of flashing the OpenBLT bootloader and the demo applications to the Bluepill board in the following YouTube video:
+📺 https://youtu.be/3xEar9Rzbeg
+This video covers:  
+   - Building the bootloader and Demos.
+   - Entering bootloader mode.
+   - Flashing bootloader via UART.
+   - Flashing Demo applications using UART and CAN.
+   - Verifying with a blinking LED demo.
