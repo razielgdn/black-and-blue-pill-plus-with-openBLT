@@ -9,7 +9,7 @@ PROJ_NAME=DemoGPIO_stm32f103
 #| Configure tool path                                                                  |
 #|--------------------------------------------------------------------------------------|
 
-TOOL_PATH=/opt/gcc-arm-none-eabi-10.3-2021.10/bin/
+TOOL_PATH=/opt/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi/bin/
 
 #|--------------------------------------------------------------------------------------|
 #| Collect project files                                                                |
