@@ -42,7 +42,7 @@ PROJ_NAME=openblt_stm32f103
 #  cmd /c for %A in ("%cd%") do @echo %~sA 
 #TOOL_PATH=C:/PROGRA~2/GNUTOO~1/82018-~1/bin/
 #TOOL_PATH=~/arm-tools/gcc-arm-none-eabi-10.3-2021.10/bin/
-TOOL_PATH=~/arm-tools/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi/bin/
+TOOL_PATH=/opt/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi/bin/
 
 #|--------------------------------------------------------------------------------------|
 #| Collect project files                                                                |
@@ -135,7 +135,7 @@ prepare_dirs:
 	mkdir -p $(BIN_PATH)
 	
 .PHONY: all
-all: prepare_dirs $(BIN_PATH)/$(PROJ_NAME).srec 
+all: prepare_dirs $(BIN_PATH)/$(PROJ_NAME).srec $(BIN_PATH)/$(PROJ_NAME).bin
 
 $(BIN_PATH)/$(PROJ_NAME).srec : $(BIN_PATH)/$(PROJ_NAME).elf
 	@$(OC) $< $(OFLAGS) $@

@@ -1,2 +1,0 @@
-This file was created to able to store build path in git
-
