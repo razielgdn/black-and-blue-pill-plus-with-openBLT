@@ -28,7 +28,7 @@ SHELL = sh
 #|--------------------------------------------------------------------------------------|
 #| Configure project name                                                               |
 #|--------------------------------------------------------------------------------------|
-PROJ_NAME=openblt_stm32f429
+PROJ_NAME=openblt_stm32f401
 
 
 #|--------------------------------------------------------------------------------------|
@@ -42,7 +42,7 @@ PROJ_NAME=openblt_stm32f429
 #  cmd /c for %A in ("%cd%") do @echo %~sA 
 #TOOL_PATH=/opt/gcc-arm-none-eabi-8-2018-q4-major/bin/
 #TOOL_PATH=C:/PROGRA~2/GNUTOO~1/82018-~1/bin/
-TOOL_PATH=
+TOOL_PATH=/opt/arm-gnu-toolchain-15.2.rel1-x86_64-arm-none-eabi/bin
 
 
 #|--------------------------------------------------------------------------------------|
@@ -57,18 +57,17 @@ rwildcard = $(strip $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filte
 
 # Collect all application files in the current directory and its subdirectories, but 
 # exclude flash-layout.c as this one is directly included in a source file, when used.
+ in a source file, when used.
 PROJ_FILES  = $(filter-out flash_layout.c, $(call rwildcard, , *.c *.h *.s))
 # Collect bootloader core files
-PROJ_FILES += $(wildcard ../../../Source/*.c)
-PROJ_FILES += $(wildcard ../../../Source/*.h)
+PROJ_FILES += $(wildcard ../Source-openBLT/*.c)
+PROJ_FILES += $(wildcard ../Source-openBLT/*.h)
 # Collect bootloader port files
-PROJ_FILES += $(wildcard ../../../Source/ARMCM4_STM32F4/*.c)
-PROJ_FILES += $(wildcard ../../../Source/ARMCM4_STM32F4/*.h)
+PROJ_FILES += $(wildcard ../Source-openBLT/ARMCM4_STM32F4/*.c)
+PROJ_FILES += $(wildcard ../Source-openBLT/ARMCM4_STM32F4/*.h)
 # Collect bootloader port compiler specific files
-PROJ_FILES += $(wildcard ../../../Source/ARMCM4_STM32F4/GCC/*.c)
-PROJ_FILES += $(wildcard ../../../Source/ARMCM4_STM32F4/GCC/*.h)
-
-
+PROJ_FILES += $(wildcard ../Source-openBLT/ARMCM4_STM32F4/GCC/*.c)
+PROJ_FILES += $(wildcard ../Source-openBLT/ARMCM4_STM32F4/GCC/*.h)
 
 #|--------------------------------------------------------------------------------------|
 #| Toolchain binaries                                                                   |
@@ -104,7 +103,7 @@ LIB_PATH  =
 #|--------------------------------------------------------------------------------------|
 STDFLAGS    = -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fno-strict-aliasing
 STDFLAGS   += -fdata-sections -ffunction-sections -Wall -g3
-OPTFLAGS    = -Os
+OPTFLAGS    = -Os -flto
 DEPFLAGS  = -MT $@ -MMD -MP -MF $(OBJ_PATH)/$*.d
 CFLAGS      = $(STDFLAGS) $(OPTFLAGS)
 CFLAGS     += -DUSE_FULL_LL_DRIVER -DUSE_HAL_DRIVER -DSTM32F429xx
