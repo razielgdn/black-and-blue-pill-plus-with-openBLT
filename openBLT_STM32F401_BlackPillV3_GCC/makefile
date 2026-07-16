@@ -30,7 +30,6 @@ SHELL = sh
 #|--------------------------------------------------------------------------------------|
 PROJ_NAME=openblt_stm32f401
 
-
 #|--------------------------------------------------------------------------------------|
 #| Configure tool path                                                                  |
 #|--------------------------------------------------------------------------------------|
@@ -41,9 +40,7 @@ PROJ_NAME=openblt_stm32f401
 # format, open the directory in the Windows command prompt and run the following command:
 #  cmd /c for %A in ("%cd%") do @echo %~sA 
 #TOOL_PATH=/opt/gcc-arm-none-eabi-8-2018-q4-major/bin/
-#TOOL_PATH=C:/PROGRA~2/GNUTOO~1/82018-~1/bin/
-TOOL_PATH=/opt/arm-gnu-toolchain-15.2.rel1-x86_64-arm-none-eabi/bin
-
+TOOL_PATH=/opt/arm-gnu-toolchain-15.2.rel1-x86_64-arm-none-eabi/bin/
 
 #|--------------------------------------------------------------------------------------|
 #| Collect project files                                                                |
@@ -56,8 +53,7 @@ TOOL_PATH=/opt/arm-gnu-toolchain-15.2.rel1-x86_64-arm-none-eabi/bin
 rwildcard = $(strip $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d)))
 
 # Collect all application files in the current directory and its subdirectories, but 
-# exclude flash-layout.c as this one is directly included in a source file, when used.
- in a source file, when used.
+# exclude flash-layout.c as this one is directly included in a source file, when used. in a source file, when used.
 PROJ_FILES  = $(filter-out flash_layout.c, $(call rwildcard, , *.c *.h *.s))
 # Collect bootloader core files
 PROJ_FILES += $(wildcard ../Source-openBLT/*.c)
@@ -80,13 +76,11 @@ OD = $(TOOL_PATH)arm-none-eabi-objdump
 AS = $(TOOL_PATH)arm-none-eabi-gcc
 SZ = $(TOOL_PATH)arm-none-eabi-size
 
-
 #|--------------------------------------------------------------------------------------|
 #| Filter project files
 #|--------------------------------------------------------------------------------------|
 PROJ_ASRCS  = $(filter %.s,$(foreach file,$(PROJ_FILES),$(notdir $(file))))
 PROJ_CSRCS  = $(filter %.c,$(foreach file,$(PROJ_FILES),$(notdir $(file))))
-
 
 #|--------------------------------------------------------------------------------------|
 #| Set important path variables                                                         |
@@ -97,7 +91,6 @@ BIN_PATH = bin
 INC_PATH = $(patsubst %/,%,$(patsubst %,-I%,$(sort $(foreach file,$(filter %.h,$(PROJ_FILES)),$(dir $(file))))))
 LIB_PATH  = 
 
-
 #|--------------------------------------------------------------------------------------|
 #| Options for toolchain binaries                                                       |
 #|--------------------------------------------------------------------------------------|
@@ -106,24 +99,22 @@ STDFLAGS   += -fdata-sections -ffunction-sections -Wall -g3
 OPTFLAGS    = -Os -flto
 DEPFLAGS  = -MT $@ -MMD -MP -MF $(OBJ_PATH)/$*.d
 CFLAGS      = $(STDFLAGS) $(OPTFLAGS)
-CFLAGS     += -DUSE_FULL_LL_DRIVER -DUSE_HAL_DRIVER -DSTM32F429xx
+CFLAGS     += -DUSE_FULL_LL_DRIVER -DUSE_HAL_DRIVER -DSTM32F401xE #Check correct driver
 CFLAGS     += -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))"
 CFLAGS     += $(INC_PATH)
 AFLAGS      = $(CFLAGS)
 LFLAGS      = $(STDFLAGS) $(OPTFLAGS)
-LFLAGS     += -T"STM32F429ZITx_FLASH.ld" -Wl,-Map=$(BIN_PATH)/$(PROJ_NAME).map
-LFLAGS     += -specs=nano.specs -Wl,--gc-sections $(LIB_PATH)
+LFLAGS     += -T"STM32F401CEUX_FLASH.ld" -Wl,-Map=$(BIN_PATH)/$(PROJ_NAME).map  # The value is ok now
+LFLAGS     += -specs=nano.specs -Wl,--gc-sections $(LIB_PATH)  
 OFLAGS      = -O srec
 ODFLAGS     = -x
 SZFLAGS     = -B -d
 RMFLAGS     = -f
 
-
 #|--------------------------------------------------------------------------------------|
 #| Specify library files                                                                |
 #|--------------------------------------------------------------------------------------|
 LIBS = 
-
 
 #|--------------------------------------------------------------------------------------|
 #| Define targets                                                                       |
@@ -131,12 +122,16 @@ LIBS =
 AOBJS = $(patsubst %.s,%.o,$(PROJ_ASRCS))
 COBJS = $(patsubst %.c,%.o,$(PROJ_CSRCS))
 
-
 #|--------------------------------------------------------------------------------------|
 #| Make ALL                                                                             |
 #|--------------------------------------------------------------------------------------|
+.PHONY: prepare_dirs
+prepare_dirs:
+	mkdir -p $(OBJ_PATH)
+	mkdir -p $(BIN_PATH)
+	
 .PHONY: all
-all: $(BIN_PATH)/$(PROJ_NAME).srec
+all: prepare_dirs $(BIN_PATH)/$(PROJ_NAME).srec $(BIN_PATH)/$(PROJ_NAME).bin
 
 $(BIN_PATH)/$(PROJ_NAME).srec : $(BIN_PATH)/$(PROJ_NAME).elf
 	@$(OC) $< $(OFLAGS) $@
@@ -148,8 +143,11 @@ $(BIN_PATH)/$(PROJ_NAME).srec : $(BIN_PATH)/$(PROJ_NAME).elf
 $(BIN_PATH)/$(PROJ_NAME).elf : $(AOBJS) $(COBJS) 
 	@echo +++ Linking [$(notdir $@)]
 	@$(LN) $(LFLAGS) -o $@ $(patsubst %.o,$(OBJ_PATH)/%.o,$(^F)) $(LIBS)
-
-
+	
+.PHONY: $(BIN_PATH)/$(PROJ_NAME).bin
+$(BIN_PATH)/$(PROJ_NAME).bin:
+	 @$(OC)  -O binary $(BIN_PATH)/$(PROJ_NAME).elf $@
+  
 #|--------------------------------------------------------------------------------------|
 #| Compile and assemble                                                                 |
 #|--------------------------------------------------------------------------------------|
@@ -173,10 +171,10 @@ clean:
 	@$(RM) $(RMFLAGS) $(patsubst %.o,%.lst,$(foreach file,$(AOBJS),$(OBJ_PATH)/$(file)))
 	@$(RM) $(RMFLAGS) $(patsubst %.o,%.lst,$(foreach file,$(COBJS),$(OBJ_PATH)/$(file)))
 	@$(RM) $(RMFLAGS) $(patsubst %.o,%.d,$(foreach file,$(COBJS),$(OBJ_PATH)/$(file)))
-	@$(RM) $(RMFLAGS) $(BIN_PATH)/$(PROJ_NAME).elf $(BIN_PATH)/$(PROJ_NAME).map
+	@$(RM) $(RMFLAGS) $(patsubst %.o,%.su,$(foreach file,$(COBJS),$(OBJ_PATH)/$(file)))
+	@$(RM) $(RMFLAGS) $(BIN_PATH)/$(PROJ_NAME).elf $(BIN_PATH)/$(PROJ_NAME).*.su $(BIN_PATH)/$(PROJ_NAME).bin $(BIN_PATH)/$(PROJ_NAME).map
 	@$(RM) $(RMFLAGS) $(BIN_PATH)/$(PROJ_NAME).srec
 	@echo +++ Clean complete
-
 	
 #|--------------------------------------------------------------------------------------|
 #| Dependency generation                                                                |
